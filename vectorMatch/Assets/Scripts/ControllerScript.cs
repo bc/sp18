@@ -4,17 +4,25 @@ using UnityEngine;
 
 public class ControllerScript : MonoBehaviour {
 
+    //True if controller is in cube
     bool inCube = false;
 
+    //Holders for sphere and box
     GameObject sphere = null;
     GameObject box = null;
 
+    //Offset to make the ball appear in a nice location relative to the controller.
     public Vector3 offset;
 
+    //Are we currently transmitting the data from this device?
     public bool broadcasting;
     
-    private SteamVR_TrackedObject trackedObj;
+    //Network objects
+    public bool isReady = false;
+    public string text;
     
+    //SteamVR boiler plate
+    private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
     {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
@@ -25,24 +33,24 @@ public class ControllerScript : MonoBehaviour {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
 
-    // 1
-    public void OnTriggerEnter(Collider other)
-    {
+    // When the controller (gameObject that owns the script) enters a trigger, it sends a debug message,
+    // and if it's a box
+    public void OnTriggerEnter(Collider other) {
         Debug.Log("ENTERED");
-        if (!inCube) { 
-            HandleEnerBox(other);
+        if (!inCube && other.CompareTag("Box")) { 
+            HandleEnterBox(other);
         }
     }
 
-    // 2
+    // Just handles debouncing, really. In other words, keeps the values from flip-flopping at the right time.
     public void OnTriggerStay(Collider other)
     {
-        if (!inCube) { 
-        HandleEnerBox(other);
+        if (!inCube && other.CompareTag("Box")) { 
+        HandleEnterBox(other);
+        }
     }
-}
 
-    // 3
+    // When the controller leaves an object and that object is the box, set the state of the box to false.
     public void OnTriggerExit(Collider other)
     {
         Debug.Log("EXITED");
@@ -52,15 +60,12 @@ public class ControllerScript : MonoBehaviour {
         }
     }
 
-    public void HandleEnerBox(Collider other)
+    // Handles state transition upon entering ONLY THE BOX. Does not check if object is box.
+    public void HandleEnterBox(Collider other)
     {
-
-        if (other.CompareTag("Box"))
-        {
-            box = other.gameObject;
-            sphere = box.transform.GetChild(0).gameObject;
-            inCube = true;
-        }
+        box = other.gameObject;
+        sphere = box.transform.GetChild(0).gameObject;
+        inCube = true;
 
     }
 
@@ -83,14 +88,31 @@ public class ControllerScript : MonoBehaviour {
                     Vector3 sphereVector = sphere.transform.localPosition;
                     Vector3 boxSize = box.GetComponent<BoxCollider>().bounds.size;
 
+                    //Holds L or R if controller is left or right.
+                    char cVal;
+
+                    if (gameObject.name.Contains("left"))
+                    {
+                        cVal = 'L';
+                    } else
+                    {
+                        cVal = 'R';
+                    }
+
+                    //Corrected 3D space variables relative to the internal sphere.
+                    // Coordinate space is from 0,0,0 in bottom front left, to 1,1,1 in top back right.
                     float xVal = sphereVector.x + .5f;
                     float yVal = sphereVector.y + .5f;
                     float zVal = sphereVector.z + .5f;
 
-                    Debug.Log("Sphere Output Vector -- X:" + xVal + " Y:" + yVal + " Z:" + zVal);
+                    text = "Controller: " + cVal + " X:" + xVal + " Y:" + yVal + " Z:" + zVal;
+                    isReady = true;
+                    //Debug.Log(text);
                 }
             } else {
+                //If we're not in the cube, don't say we're ready, and set the ball back back to the center of the cube.
                 sphere.transform.localPosition = new Vector3(0, 0, 0);
+                isReady = false;
             }
         }
     }
