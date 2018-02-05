@@ -24,6 +24,7 @@ public class socketScript : MonoBehaviour {
 		leftControllerScript = leftController.GetComponent<ControllerScript> ();
         rightControllerScript = rightController.GetComponent<ControllerScript>();
         time = Time.time;
+        Debug.Log("Starting socket script");
     }
 	
     // connect to the server on start
@@ -77,6 +78,7 @@ public class socketScript : MonoBehaviour {
 	void SocketResponse() {
 		string serverSays = myTCP.readSocket();
 		if (serverSays != "") {
+            //Handle server responses here
 			Debug.Log("[SERVER]" + serverSays);
 		}
 	}

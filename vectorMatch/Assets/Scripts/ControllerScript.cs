@@ -116,4 +116,9 @@ public class ControllerScript : MonoBehaviour {
             }
         }
     }
+
+    public Vector3 getSelectionPoint()
+    {
+        return gameObject.transform.position + gameObject.transform.TransformVector(offset);
+    }
 }
