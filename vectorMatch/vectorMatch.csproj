@@ -291,6 +291,8 @@
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CenterTarget.cs" />
     <Compile Include="Assets\Scripts\ControllerScript.cs" />
+    <Compile Include="Assets\Scripts\DataSaver.cs" />
+    <Compile Include="Assets\Scripts\DataSaverInit.cs" />
     <Compile Include="Assets\Scripts\MatrixMultiplication.cs" />
     <Compile Include="Assets\Scripts\OutputSphere.cs" />
     <Compile Include="Assets\Scripts\Rotator.cs" />
@@ -299,6 +301,7 @@
     <Compile Include="Assets\Scripts\TargetBallScript.cs" />
     <Compile Include="Assets\Scripts\TargetControllerScript.cs" />
     <Compile Include="Assets\Scripts\TCPConnection.cs" />
+    <Compile Include="Assets\Scripts\TrialInfo.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />

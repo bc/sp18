@@ -31,6 +31,8 @@ public class ControllerScript : MonoBehaviour {
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         coordinates = new Vector3(0, 0, 0);
+        /// Controller.transform.rot.eulerAngles.x; 
+        
     }
 
     // When the controller (gameObject that owns the script) enters a trigger, it sends a debug message,
