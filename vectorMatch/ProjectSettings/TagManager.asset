@@ -9,6 +9,7 @@ TagManager:
   - RightBox
   - Box
   - Controller
+  - OutputSphere
   layers:
   - Default
   - TransparentFX
