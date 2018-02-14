@@ -10,6 +10,8 @@ public class OutputSphere : MonoBehaviour
     public GameObject matrix;
     private MatrixMultiplication matrixScript;
     bool initialized = false;
+    private int trialCounter = 0;
+    public DSObjectScript dso;
 
     // Use this for initialization
     void Start()
@@ -17,6 +19,7 @@ public class OutputSphere : MonoBehaviour
         targetScript = target.GetComponent<CenterTarget>();
         matrixScript = matrix.GetComponent<MatrixMultiplication>();
         //setNewBallLocations();
+        trialCounter = 0;
     }
 
     // Update is called once per frame
@@ -29,6 +32,11 @@ public class OutputSphere : MonoBehaviour
         }
         if (targetScript.selected)
         {
+            dso.info.trialNum = trialCounter;
+            DataSaver.saveTrial<TrialInfo>(dso.info);
+            dso.info = new TrialInfo();
+            ++trialCounter;
+            Debug.Log("trials completed: " + trialCounter);
             setNewBallLocations();
         }
     }

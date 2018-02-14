@@ -1,21 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 [System.Serializable]
 public class TrialInfo {
-    public List<float> LeftX = new List<float>();
-    public List<float> RightX = new List<float>();
-    public List<float> LeftY = new List<float>();
-    public List<float> RightY = new List<float>();
-    public List<float> LeftZ = new List<float>();
-    public List<float> RightZ = new List<float>();
+    public List<Int64> timestamp = new List<Int64>();
 
-    //TODO Rotation
-    //public List<float> LeftX = new List<float>();
-    //public List<float> RightX = new List<float>();
-    //public List<float> LeftY = new List<float>();
-    //public List<float> RightY = new List<float>();
-    //public List<float> LeftZ = new List<float>();
-    //public List<float> RightZ = new List<float>();
+    public List<Vector3> rightPosition = new List<Vector3>();
+    public List<Vector3> leftPosition = new List<Vector3>();
 
+    public List<Vector3> rightEuler = new List<Vector3>();
+    public List<Vector3> leftEuler = new List<Vector3>();
+
+    public Vector3 targetPosition = new Vector3();
+    public List<Vector3> outputPosition = new List<Vector3>();
+
+    public string handType = "ERR";
+    public int trialNum = 0;
 }

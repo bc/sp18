@@ -293,6 +293,7 @@
     <Compile Include="Assets\Scripts\ControllerScript.cs" />
     <Compile Include="Assets\Scripts\DataSaver.cs" />
     <Compile Include="Assets\Scripts\DataSaverInit.cs" />
+    <Compile Include="Assets\Scripts\DSObjectScript.cs" />
     <Compile Include="Assets\Scripts\MatrixMultiplication.cs" />
     <Compile Include="Assets\Scripts\OutputSphere.cs" />
     <Compile Include="Assets\Scripts\Rotator.cs" />
