@@ -13,23 +13,27 @@ public class MatrixMultiplication : MonoBehaviour {
     private double[,] hand4_ultraflex;
     private double[,] identity;
     private double[,] transformMatrix;
+    private double[] scale;
+    private double[] mins;
     private Vector3 result;
     public GameObject box;
     private GameObject sphere;
     public bool isHand3;
     public bool isHand4;
     public bool isIdentity;
+    public bool matrixChanged;
 
     // Use this for initialization
     void Start()
     {
         isHand3 = true;
+        matrixChanged = false;
         leftControllerScript = leftController.GetComponent<ControllerScript>();
         rightControllerScript = rightController.GetComponent<ControllerScript>();
         sphere = box.transform.GetChild(0).gameObject;
         controllerCoordinates = new double[1, 7];
         controllerCoordinates[0, 6] = 0;
-        hand3_ultraflex = new double[7, 6] { 
+        hand3_ultraflex = new double[7, 6] {
             { 0.08848152, 0.005962941, 0.14381746, 1.217437e-03, -0.003103362, -0.0001697737 },
             { 0.09123613, -0.006078463,  0.17772115, -6.700282e-05, -0.003325758, -0.0002302716},
             { -0.03392852, -0.025141921, -0.18999517, -4.953349e-03,  0.002157888, 0.0002234035},
@@ -39,7 +43,9 @@ public class MatrixMultiplication : MonoBehaviour {
             { -0.17197715,  0.049936650,  0.01661992,  3.884230e-03,  0.003561464, 0.0009869429}
         };
 
-        hand4_ultraflex = new double[7, 6] { 
+        //X: (-0.225,0.3888)
+
+        identity = new double[7, 6] { 
             {1, 0, 0, 0, 0, 0},
             {0, 1, 0, 0, 0, 0},
             {0, 0, 1, 0, 0, 0},
@@ -49,7 +55,7 @@ public class MatrixMultiplication : MonoBehaviour {
             {0, 0, 0, 0, 0, 0}
         };
 
-        identity = new double[7, 6] 
+        hand4_ultraflex = new double[7, 6] 
         { 
             { 0.039516170, -0.0028948473, 0.08718748, 0.0001413771, -1.091838e-03, -2.037809e-04 },
             {  0.002908213, -0.0061843186,  0.03988505, -0.0002079789, -3.107123e-05, -1.844063e-04},
@@ -63,30 +69,42 @@ public class MatrixMultiplication : MonoBehaviour {
 
 
         transformMatrix = hand3_ultraflex;
+        scale = new double[3];
+        mins = new double[3];
+        setScale();
     }
 
     // Update is called once per frame
-        void Update () {
+    void Update () {
         if (Input.GetKeyDown(KeyCode.Space)) {
             if (isHand3)
             {
                 transformMatrix = hand4_ultraflex;
                 isHand3 = false;
+                isHand4 = true;
+                setScale();
                 Debug.Log("transformMatrix is hand4");
             }
             else if (isHand4)
             {
-                transformMatrix = hand3_ultraflex;
-                isHand3 = true;
-                Debug.Log("transformMatrix is hand3");
+                transformMatrix = identity;
+                isHand4 = false;
+                isIdentity = true;
+                setScale();
+                Debug.Log("transformMatrix is identity");
             }
             else if (isIdentity)
             {
-
+                transformMatrix = hand3_ultraflex;
+                isHand3 = true;
+                isIdentity = false;
+                setScale();
+                Debug.Log("transformMatrix is hand3");
             }
 
+            matrixChanged = true;
         }
-    Vector3 left = leftControllerScript.coordinates;
+        Vector3 left = leftControllerScript.coordinates;
         Vector3 right = rightControllerScript.coordinates;
         controllerCoordinates[0,0] = left.x;
         controllerCoordinates[0,1] = left.y;
@@ -94,57 +112,31 @@ public class MatrixMultiplication : MonoBehaviour {
         controllerCoordinates[0,3] = right.x;
         controllerCoordinates[0,4] = right.y;
         controllerCoordinates[0,5] = right.z;
-        matrixMultiply();
+        setOutputSphereCoordinates();
         sphere.transform.localPosition = result;
-        
+
     }
 
-    void matrixMultiply()
+    void setOutputSphereCoordinates()
     {
-        int m = controllerCoordinates.GetLength(0);
-        int n = transformMatrix.GetLength(1);
-        int o = transformMatrix.GetLength(0);
-        double[,] c = new double[m, n];
-        for (int i = 0; i < m; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                c[i, j] = 0;
-                for (int k = 0; k < o; k++)
-                {
-                    c[i, j] += controllerCoordinates[i, k] * transformMatrix[k, j];
-                   
-                }
-            }
-        }
-        //Debug.Log(c[0, 0] + " " + c[0, 1] + " " + c[0, 2]);
-        result.x = (float)c[0, 0] * 1.2f;
-        result.y = (float)c[0, 1] * 1.2f;
-        result.z = (float)c[0, 2] * 0.6f;
+        result = matrixMultiply(controllerCoordinates, transformMatrix);
+        //result.x *= (float)scale[0];
+        //result.y *= (float)scale[1];
+        //result.z *= (float)scale[2];
+        result.x = (result.x - (float)mins[0]) * (float)scale[0] * 4 - 0.5f * box.transform.localScale.x * 4;
+        result.y = (result.y - (float)mins[1]) * (float)scale[1] * 4 - 0.5f * box.transform.localScale.x * 4;
+        result.z = (result.z - (float)mins[2]) * (float)scale[2] * 4 - 0.5f * box.transform.localScale.x * 4;
     }
 
     public Vector3 getTargetLocation(double[,] coord)
     {
-        Vector3 newLoc;
-        int m = coord.GetLength(0);
-        int n = transformMatrix.GetLength(1);
-        int o = transformMatrix.GetLength(0);
-        double[,] c = new double[m, n];
-        for (int i = 0; i < m; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                c[i, j] = 0;
-                for (int k = 0; k < o; k++)
-                {
-                    c[i, j] += coord[i, k] * transformMatrix[k, j];
-
-                }
-            }
-        }
-        newLoc.x = (float)c[0, 0] * 1.2f;
-        newLoc.y = (float)c[0, 1] * 1.2f;
-        newLoc.z = (float)c[0, 2] * 0.6f;
+        Vector3 newLoc = matrixMultiply(coord, transformMatrix);
+        //newLoc.x *= (float)scale[0];
+        //newLoc.y *= (float)scale[1];
+        //newLoc.z *= (float)scale[2];
+        newLoc.x = (newLoc.x - (float)mins[0]) * ((float)scale[0] * 4) - 0.5f * box.transform.localScale.x * 4;
+        newLoc.y = (newLoc.y - (float)mins[1]) * ((float)scale[1] * 4) - 0.5f * box.transform.localScale.x * 4;
+        newLoc.z = (newLoc.z - (float)mins[2]) * ((float)scale[2] * 4) - 0.5f * box.transform.localScale.x * 4;
         return newLoc;
     }
 
@@ -152,4 +144,58 @@ public class MatrixMultiplication : MonoBehaviour {
     {
         return isHand3;
     }
+
+    private Vector3 matrixMultiply(double[,] a, double[,] b)
+    {
+        int m = a.GetLength(0);
+        int n = b.GetLength(1);
+        int o = b.GetLength(0);
+        double[,] c = new double[m, n];
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                c[i, j] = 0;
+                for (int k = 0; k < o; k++)
+                {
+                    c[i, j] += a[i, k] * b[k, j];
+
+                }
+            }
+        }
+        Vector3 resultVector = new Vector3((float)c[0, 0], (float)c[0, 1], (float)c[0, 2]);
+        return resultVector;
+    }
+
+    private void setScale()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            double max = 0;
+            double min = 0;
+            for (int j = 0; j < 6; j++)
+            {
+                if (transformMatrix[j, i] > 0)
+                {
+                    max += transformMatrix[j, i];
+                }
+                else
+                {
+                    min += transformMatrix[j, i];
+                }
+            }
+            scale[i] = box.transform.localScale.x / (max - min);
+            mins[i] = min;
+            Debug.Log(scale[i]);
+            //3/4
+            //    (value + min) * width/range - 0.5width
+        }
+    }
+
+    public double[,] getControllerLocation()
+    {
+        return controllerCoordinates;
+    }
 }
+
+
