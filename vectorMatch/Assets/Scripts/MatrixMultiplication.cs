@@ -76,6 +76,7 @@ public class MatrixMultiplication : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
         if (Input.GetKeyDown(KeyCode.Space)) {
             if (isHand3)
             {
@@ -104,6 +105,10 @@ public class MatrixMultiplication : MonoBehaviour {
 
             matrixChanged = true;
         }
+
+
+
+
         Vector3 left = leftControllerScript.coordinates;
         Vector3 right = rightControllerScript.coordinates;
         controllerCoordinates[0,0] = left.x;

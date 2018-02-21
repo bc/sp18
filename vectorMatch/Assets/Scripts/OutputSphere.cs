@@ -14,6 +14,12 @@ public class OutputSphere : MonoBehaviour
     public DSObjectScript dso;
     private float minRand;
     private float maxRand;
+    public GameObject controllerOne;
+    public GameObject controllerTwo;
+    private ControllerScript csOne;
+    private ControllerScript csTwo;
+
+    private AudioSource rewardSource;
 
     // Use this for initialization
     void Start()
@@ -24,6 +30,9 @@ public class OutputSphere : MonoBehaviour
         maxRand = 0.9f;
         //setNewBallLocations();
         trialCounter = 0;
+        rewardSource = this.GetComponent<AudioSource>();
+        csOne = controllerOne.GetComponent<ControllerScript>();
+        csTwo = controllerTwo.GetComponent<ControllerScript>();
     }
 
     // Update is called once per frame
@@ -36,11 +45,20 @@ public class OutputSphere : MonoBehaviour
         }
         if (targetScript.selected)
         {
-            dso.info.trialNum = trialCounter;
-            DataSaver.saveTrial<TrialInfo>(dso.info);
-            dso.info = new TrialInfo();
+            if (dso.RECORDING)
+            {
+                dso.info.trialNum = trialCounter;
+                DataSaver.saveTrial<TrialInfo>(dso.info);
+                dso.info = new TrialInfo();
+            } else
+            {
+                Debug.Log("Trials NOT being recorded.");
+            }
             ++trialCounter;
             Debug.Log("trials completed: " + trialCounter);
+
+            //Play Sound
+            rewardSource.Play();
             setNewBallLocations();
         }
         if (matrixScript.matrixChanged)

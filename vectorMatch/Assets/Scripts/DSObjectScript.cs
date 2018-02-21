@@ -12,6 +12,7 @@ public class DSObjectScript : MonoBehaviour {
     public GameObject outputBall;
     public GameObject matrixObject;
     MatrixMultiplication matrixScript;
+    public bool RECORDING;
 
     public TrialInfo info;
 
@@ -50,8 +51,6 @@ public class DSObjectScript : MonoBehaviour {
         {
             info.handType = "hand4";
         }
-
-        //TODO - ROTATION
 
 
     }

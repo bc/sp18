@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class TargetBallScript : MonoBehaviour {
 
     public ControllerScript controller;
@@ -11,7 +12,7 @@ public class TargetBallScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.gameObject.SetActive(false);
-	}
+    }
 
     private void OnTriggerEnter(Collider other)
     {

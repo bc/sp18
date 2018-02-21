@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class ControllerScript : MonoBehaviour {
 
+    private EVRButtonId triggerButton = EVRButtonId.k_EButton_SteamVR_Trigger;
     //True if controller is in cube
     bool inCube = false;
 
@@ -129,6 +131,7 @@ public class ControllerScript : MonoBehaviour {
             coordinates.x = 0;
             coordinates.y = 0;
             coordinates.z = 0;
+            StartCoroutine(LongVibration(3999));
         }
     }
 
@@ -136,4 +139,24 @@ public class ControllerScript : MonoBehaviour {
     {
         return gameObject.transform.position + gameObject.transform.TransformVector(offset);
     }
+
+    public void rewardBuzz()
+    {
+        if (Controller.GetPress(triggerButton))
+        {
+            StartCoroutine(LongVibration(3999));
+            //Controller.TriggerHapticPulse((ushort)399);
+            Debug.Log("Haptic feedback");
+        }
+        
+    }
+
+    IEnumerator LongVibration(float strength)
+    {
+        Controller.TriggerHapticPulse((ushort)(3999));
+        yield return null;
+
+    } 
+
+
 }
