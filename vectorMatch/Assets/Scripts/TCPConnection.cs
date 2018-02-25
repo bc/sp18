@@ -8,7 +8,7 @@ public class TCPConnection : MonoBehaviour {
 	//the name of the connection, not required but better for overview if you have more than 1 connections running 
 	public string conName = "Localhost";
 	//ip/address of the server, 127.0.0.1 is for your own computer 
-	public string conHost = "192.168.43.46";
+	public string conHost = "169.254.121.102";
 	//port for the server, make sure to unblock this in your router firewall if you want to allow external connections 
 	public int conPort = 27019; //a true/false variable for connection status 
 	public bool socketReady = false;
