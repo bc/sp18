@@ -17,7 +17,6 @@ void setup() {
       loadCell[i].set_offset(0);
       loadCell[i].set_scale(1);
   }
-  
 }
 
 float getLoadCellVal(int index){
@@ -38,4 +37,5 @@ String readAndComposeDataLineString(int numLoadCells){
 
 void loop() {
   Serial.print(readAndComposeDataLineString(numLoadCells));
+  delay(7.16);
 }
