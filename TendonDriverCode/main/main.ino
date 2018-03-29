@@ -1,83 +1,37 @@
-/*
- Setup your scale and start the sketch WITHOUT a weight on the scale
- Once readings are displayed place the weight on the scale
- Press +/- or a/z to adjust the calibration_factor until the output readings match the known weight
- Arduino pin 6 -> HX711 CLK
- Arduino pin 5 -> HX711 DOUT
- Arduino pin 5V -> HX711 VCC
- Arduino pin GND -> HX711 GND 
-*/
+#include <HX711.h>
 
-#include "HX711.h"
-#include "DRV8825.h"
-
-HX711 scale(5, 6);
-DRV8825 stepper(200,8,9);
-
-
-float calibration_factor = 500; // this calibration factor is adjusted according to my load cell
-float units;
-float ounces;
+int numLoadCells = 7;
+int sckPins[] = {21, 23, 25, 35, 29, 31, 33};
+int datPins[] = {20, 22, 24, 34, 28, 30, 32};
+int calPin = 13;
+int loadCellGain = 128;
+HX711 loadCell[7];
 
 void setup() {
+  //Serial setup
   Serial.begin(115200);
-  Serial.println("HX711 calibration sketch");
-  Serial.println("Remove all weight from scale");
-  Serial.println("After readings begin, place known weight on scale");
-  Serial.println("Press + or a to increase calibration factor");
-  Serial.println("Press - or z to decrease calibration factor");
-
-  scale.set_scale();
-  scale.tare();  //Reset the scale to 0
-
-  long zero_factor = scale.read_average(); //Get a baseline reading
-  Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  Serial.println(zero_factor);
-  stepper.begin(240,1);
+  pinMode(calPin, INPUT_PULLUP);
+  for(int i = 0; i < numLoadCells; i++){
+    Serial.println(i);
+      loadCell[i].begin(datPins[i], sckPins[i], loadCellGain);
+      loadCell[i].set_offset(0);
+      loadCell[i].set_scale(1);
+  }
+  
 }
 
-int pos = 0;
-int target = 0;
+float getLoadCellVal(int index){
+    return float(loadCell[index].read());
+}
 
 void loop() {
-
-  scale.set_scale(calibration_factor); //Adjust to this calibration factor
-
-//  Serial.print("Reading: ");
-  units = scale.get_units(), 10;
-  if (units < 0)
-  {
-    units = 0.00;
-  }
-  ounces = units * 0.035274;
-  Serial.print(units);
-  Serial.print(pos);
-  Serial.print(" grams"); 
-  Serial.print(" calibration_factor: ");
-  Serial.print(calibration_factor);
-  Serial.println();
-
-  if(Serial.available())
-  {
-    char temp = Serial.read();
-    if(temp == '+' || temp == 'a')
-      calibration_factor += 1;
-    else if(temp == '-' || temp == 'z')
-      calibration_factor -= 1;
-    else if(temp == 't'){
-      target = Serial.parseInt();
+  String dataline = "";
+  for(int i = 0; i < numLoadCells; i++){
+    dataline += String(getLoadCellVal(i),0);
+    if(i != numLoadCells - 1){
+    dataline += ",";
     }
   }
-  int stepSize = 4;
-  int tolerance = 10;
-  
-  if(abs(target-units) >= tolerance){
-    if(target > units){
-      stepper.rotate(stepSize);
-      pos += stepSize;
-    } else {
-      stepper.rotate(-stepSize);
-      pos -= stepSize;
-    }
-  }
+  dataline += "\n";
+  Serial.print(dataline);
 }
