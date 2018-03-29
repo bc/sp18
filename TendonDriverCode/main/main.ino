@@ -24,7 +24,7 @@ float getLoadCellVal(int index){
     return float(loadCell[index].read());
 }
 
-void loop() {
+String readAndComposeDataLineString(int numLoadCells){
   String dataline = "";
   for(int i = 0; i < numLoadCells; i++){
     dataline += String(getLoadCellVal(i),0);
@@ -33,5 +33,9 @@ void loop() {
     }
   }
   dataline += "\n";
-  Serial.print(dataline);
+  return(dataline);
+}
+
+void loop() {
+  Serial.print(readAndComposeDataLineString(numLoadCells));
 }
