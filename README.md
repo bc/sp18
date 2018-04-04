@@ -19,3 +19,9 @@ interface eth1
 static ip_address=192.169.2.10/24
 ```
 
+for remote ssh into rpi
+```
+brew cask install osxfuse
+brew install sshfs
+sshfs username@hostname:/remote/directory/path /local/mount/point -ovolname=NAME
+```
