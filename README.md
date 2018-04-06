@@ -25,3 +25,8 @@ brew cask install osxfuse
 brew install sshfs
 sshfs username@hostname:/remote/directory/path /local/mount/point -ovolname=NAME
 ```
+
+on rpi, to keep ssh open
+```
+
+```
