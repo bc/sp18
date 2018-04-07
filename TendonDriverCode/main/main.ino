@@ -12,7 +12,6 @@ void setup() {
   Serial.begin(115200);
   pinMode(calPin, INPUT_PULLUP);
   for(int i = 0; i < numLoadCells; i++){
-    Serial.println(i);
       loadCell[i].begin(datPins[i], sckPins[i], loadCellGain);
       loadCell[i].set_offset(0);
       loadCell[i].set_scale(1);
@@ -36,6 +35,7 @@ String readAndComposeDataLineString(int numLoadCells){
 }
 
 void loop() {
-  Serial.print(readAndComposeDataLineString(numLoadCells));
+  String myLine = readAndComposeDataLineString(numLoadCells);
+  Serial.print(myLine);
   delay(7.16);
 }
