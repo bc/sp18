@@ -1,11 +1,11 @@
 #include <HX711.h>
 
-int numLoadCells = 7;
-int sckPins[] = {21, 23, 25, 35, 29, 31, 33};
-int datPins[] = {20, 22, 24, 34, 28, 30, 32};
+int numLoadCells = 8;
+int sckPins[] = {21, 23, 25, 35, 29, 31, 33, 37};
+int datPins[] = {20, 22, 24, 34, 28, 30, 32, 36};
 int calPin = 13;
 int loadCellGain = 128;
-HX711 loadCell[7];
+HX711 loadCell[8];
 
 void setup() {
   //Serial setup
@@ -14,7 +14,7 @@ void setup() {
   for(int i = 0; i < numLoadCells; i++){
       loadCell[i].begin(datPins[i], sckPins[i], loadCellGain);
       loadCell[i].set_offset(0);
-      loadCell[i].set_scale(0.01);
+      loadCell[i].set_scale(1);
   }
 }
 
@@ -30,6 +30,8 @@ String readAndComposeDataLineString(int numLoadCells){
     dataline += ",";
     }
   }
+  // Serial.print(getLoadCellVal(7));
+  // Serial.print("\n");
   dataline += "\n";
   return(dataline);
 }
