@@ -4,14 +4,11 @@ int numLoadCells = 7;
 //each column represents a loadCell
 int sckPins[] = {25, 23, 35, 33, 31, 29, 21};
 int datPins[] = {24, 22, 34, 32, 30, 28, 20};
-
-int calPin = 13;
 int loadCellGain = 128;
 HX711 loadCell[7];
 
 void setup() {
   Serial.begin(115200); //baud rate; must match Python code
-  pinMode(calPin, INPUT_PULLUP);
   for(int i = 0; i < numLoadCells; i++){
     initializeLoadCell(i, datPins[i], sckPins[i], loadCellGain);
   }
