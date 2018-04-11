@@ -15,8 +15,36 @@ void setup() {
 }
 
 // returns the current millivolt level of a given HX711 load amplifier.
-float getLoadCellVal(int index){
-    return float(loadCell[index].read());
+long getLoadCellVal(int index){
+    return(loadCell[index].read());
+}
+
+// returns the value padded to a string of a given a size (desired length).
+String getPaddedVal(long val, int desiredLength){
+    String result = "";
+    bool wasNegative = false;
+
+    if (val < 0){
+      wasNegative = true;
+    }
+
+    // If the value was negative, change up our inits to work with the loop
+    if(wasNegative){
+      val = val * -1;
+      desiredLength -= 1;
+    }
+
+    //Loop through to prepend 0s 10 times if positive, 9 times if negative
+    result += String(val,10);
+    while (result.length() < desiredLength){
+      result = "0" + result;
+    }
+
+    if(wasNegative){
+      result = "-" + result;
+    }
+
+    return(result);
 }
 
 // begins the load cell, sets the offset + scale to zero.
@@ -32,7 +60,7 @@ void initializeLoadCell(int loadCellIndex, int datPin, int sckPin, int loadCellG
 String readAndComposeDataLineString(int numLoadCells){
   String dataline = "";
   for(int i = 0; i < numLoadCells; i++){
-    dataline += String(getLoadCellVal(i),0);
+    dataline += getPaddedVal(getLoadCellVal(i), 10);
     //Append a comma after each load cell value, excluding the final one
     if(i != numLoadCells - 1){
       dataline += ",";
