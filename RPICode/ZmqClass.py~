@@ -1,0 +1,55 @@
+from LoadCellAccumulator import LoadCellAccumulator
+import serial
+import pdb
+import threading
+import io
+import sys
+import time
+from serial.tools import list_ports
+import numpy as np
+
+
+class ZmqClass:
+	
+	class ZmqThread(threading.Thread):
+		def __init__(self, func):
+			threading.Thread.__init__(self)
+			self.func = func
+		def run(self):
+			self.func()
+
+	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
+	def SendLoadsFromSensors(self):
+	 	#instantiate the zmq connection to Unity as PUB 
+		context = zmq.Context()
+		socket = context.socket(zmq.PUB)
+		#in future write code to find the correct IP address and port 
+		socket.bind("tcp://169.254.225.37:5555")
+		#Instantiate a load cell accumulator		
+		lca = LoadCellAccumulator() 	
+		
+		while True:
+	      		loads = lca.getLoadsArray(); 	
+    			for value in loads:
+					send(loads[value])
+				#  this needs to come out to 80 Hz '
+    				time.sleep(7)		
+
+	def __init__(self):
+		self.numLoadCells = 7
+		self.measuredLoads = []
+		self.updatedLoads = " " 
+		self.startTime = time.time()
+		self.hasUpdated = False
+		self.zmqSender = self.ZmqThread(self.SendLoadsFromSensors)
+		self.zmqSender.start()
+
+	
+	def isCollectingData(self):
+		return abs(time.time() - self.startTime) > 2.5 and self.hasUpdated is True
+
+	def serial_generator(self, serial_object):
+		while True:
+			yield serial_object.readline()
+		serial_object.close()
+
