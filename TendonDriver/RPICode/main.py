@@ -9,7 +9,8 @@ from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
 from logCSV import *
 
-#If, god forbid, there's some weird GPIO import error which, apparently happens??
+# If, god forbid, there's some weird GPIO import error which, apparently
+# happens??
 try:
     import RPi.GPIO as GPIO
 except RuntimeError:
@@ -30,16 +31,18 @@ def compose_trigger_command(measuredForce, targetForce, threshold, fixed_speed):
     else:
         return(fixed_speed)
 
+
 def compose_P_command(measuredForce, targetForce, threshold, p):
     if np.abs(measuredForce - targetForce) < threshold:
         # print('inthreshold')
         return(0)
     residual = targetForce - measuredForce
-    return(p*residual)
+    return(p * residual)
 
 from datetime import datetime
 
-#The meaty body loop. This function is CURRENTLY the main control loop for the project
+# The meaty body loop. This function is CURRENTLY the main control loop
+# for the project
 """
 @title threshold_loop
 @description primary threshold control loop that maintains tensions based on composed commands
@@ -49,6 +52,8 @@ from datetime import datetime
 @param threshold the actual threshold -- if the value is within threshold of the target, it goes to 0
 @param speed overal speed
 """
+
+
 def threshold_loop(lca, zmq, sleep_time, threshold, speed):
     np.set_printoptions(precision=3, suppress=True)
     global pwm_controller_list
@@ -58,7 +63,8 @@ def threshold_loop(lca, zmq, sleep_time, threshold, speed):
     for targetForces in zmq:
         # targetForces = np.array([1.0]*7)
         measuredForces = lca.get_calibratedTensions()
-        commands = [compose_P_command(measuredForces[i],targetForces[i],threshold,speed) for i in range(7)]
+        commands = [compose_P_command(measuredForces[i], targetForces[
+                                      i], threshold, speed) for i in range(7)]
         applyCommandsToMotorDrivers(pwm_controller_list, commands)
         deltaTime = datetime.now() - startingTime
         startingTime = datetime.now()
@@ -68,7 +74,7 @@ def threshold_loop(lca, zmq, sleep_time, threshold, speed):
             print(observation)
             print("deltaTime: " + str(deltaTime))
             print("-------------------")
-            counter = 0  #reset
+            counter = 0  # reset
         counter += 1
         time.sleep(sleep_time)
 
@@ -79,7 +85,7 @@ def zmq_generator(zmq_recv):
     while True:
         yield zmq_recv.getTargetForces()
 
-#Actual script.
+# Actual script.
 try:
     print('LoadCellAccumulator: Initialized')
     lca = LoadCellAccumulator.LoadCellAccumulator()
@@ -103,7 +109,8 @@ try:
                 219232.7869]
     offsets = collectDataAtZeroLoad(lca)
     print("Offsets: " + str(offsets))
-    lcpArray = [LoadCellAccumulator.LoadCellCalibrationProfile(multList[i], offsets[i]) for i in range(len(offsets))]
+    lcpArray = [LoadCellAccumulator.LoadCellCalibrationProfile(
+        multList[i], offsets[i]) for i in range(len(offsets))]
     lca.lcpArray = lcpArray
     threshold_loop(lca, zmq_generator(zmq_recv),
                    sleep_time=0.001, threshold=0.001, speed=5000)
