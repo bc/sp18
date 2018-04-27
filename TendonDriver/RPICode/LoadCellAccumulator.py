@@ -8,7 +8,10 @@ import time
 from serial.tools import list_ports
 import numpy as np
 
-
+"""
+@title LoadCellCalibrationProfile
+@description Pure data class that contains the information relevant to the load cell accumulators on a per-unit basis
+"""
 class LoadCellCalibrationProfile(object):
     """Intercept is set to always be at zero; the offset brings it to zero"""
 
@@ -26,10 +29,18 @@ class LoadCellCalibrationProfile(object):
     def set_bias(self, bias):
         self.offset = bias
 
+"""
+@title LoadCellAccumulator
+@description Handles all load cells and accumulated data from arduino into an 'always most recent' stream
+
+"""
 class LoadCellAccumulator:
 
-    def __init__(self):
-        self.numLoadCells = 7
+    """
+    @title init NOT DIRECTLY CALLED. NO ARGS. Does standard setup.
+    """
+    def __init__(self, _numLoadCells = 7):
+        self.numLoadCells = _numLoadCells
         self.measuredLoads = []
         self.ser = self.instantiate_arduino_listener()
         self.startTime = time.time()
@@ -40,6 +51,13 @@ class LoadCellAccumulator:
         self.loadCellDataCollector.start()
         self.lcpArray = []
 
+    """
+    @title loadCellThread
+    @description Just boilerplate to run threads for each of the load cells
+    TBH still don't understand why we didn't just make LoadCellAccumulator implement threading
+    It would have made perfect sense as one big old thread since all the wrapper is 
+    doing is creating a smaller internal thread to the larger outer class. ???
+    """
     class loadCellThread(threading.Thread):
 
         def __init__(self, func):
@@ -98,8 +116,8 @@ class LoadCellAccumulator:
     def err_if_arduino_not_plugged_in(self, ACMPorts):
         if not len(ACMPorts) >= 1:
             raise Exception('Arduino is not plugged into a USB port.')
-    #@return the arduino path to usb. will have ACM in the string name
 
+    #@return the arduino path to usb. will have ACM in the string name
     def findPortname(self):
         comports = [x[0] for x in list_ports.comports()]
         ACMPorts = [port for port in comports if "ACM" in port]
@@ -124,19 +142,35 @@ class LoadCellAccumulator:
         ser.nonblocking()
         return(ser)
 
+    """
+    @title getLoadsArray
+    @description Called externally to get the most recent loads array.
+    @return arrayOfCurrentLoads
+    """
     def getLoadsArray(self):
         return np.asarray(self.measuredLoads).astype(np.float)
 
+    """
+    @title get_calibratedTensions
+    @description gets the list of post-calibrated tensions. IE the usable values
+    @return calibratedTensions post-calibration load-cell measurements
+    """
     def get_calibratedTensions(self):
         loads = self.getLoadsArray()
         calibratedTensions = [self.lcpArray[i].mv_to_kg(
             loads[i]) for i in range(len(self.lcpArray))]
         return(calibratedTensions)
 
+    """
+    Same as getLoadsArray but doesn't use numpy. ???
+    """
     def get_uncalibrated_loads(self):
         loads = self.getLoadsArray()
         return(loads)
-
+    """
+    @title serial_generator
+    @description simple generator that always just grabs a serial line when one is available.
+    """
     def serial_generator(self, serial_object):
         while True:
             yield serial_object.readline()
