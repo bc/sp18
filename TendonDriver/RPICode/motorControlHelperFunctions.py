@@ -27,7 +27,7 @@ def stop_all_motors(pwm_controller_list):
 
 
 def stop_motor(pwm_controller_list, motor_i):
-    pwm_controller_list[i].stop()
+    pwm_controller_list[motor_i].stop()
 
 
 def setOffsetsOnceLCAIsReady(lca):

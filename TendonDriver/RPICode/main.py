@@ -8,6 +8,8 @@ from genericHelperFunctions import *
 from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
 from logCSV import *
+
+#If, god forbid, there's some weird GPIO import error which, apparently happens??
 try:
     import RPi.GPIO as GPIO
 except RuntimeError:
@@ -37,7 +39,16 @@ def compose_P_command(measuredForce, targetForce, threshold, p):
 
 from datetime import datetime
 
-
+#The meaty body loop. This function is CURRENTLY the main control loop for the project
+"""
+@title threshold_loop
+@description primary threshold control loop that maintains tensions based on composed commands
+@param lca Initialized loadCellAccumulator (See LoadCellAccumulator.py)
+@param zmq a generator that supplies values for the threshold loop
+@param sleep_time the ammount of time to sleep between threshold cycles
+@param threshold the actual threshold -- if the value is within threshold of the target, it goes to 0
+@param speed overal speed
+"""
 def threshold_loop(lca, zmq, sleep_time, threshold, speed):
     np.set_printoptions(precision=3, suppress=True)
     global pwm_controller_list
@@ -69,6 +80,7 @@ def zmq_generator(zmq_recv):
     while True:
         yield zmq_recv.getTargetForces()
 
+#Actual script.
 try:
     print('LoadCellAccumulator: Initialized')
     lca = LoadCellAccumulator.LoadCellAccumulator()
