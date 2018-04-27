@@ -5,7 +5,7 @@ def loads_to_logCSVline(logFile,loads):
 	logFile.write(loadCellWithTime)
 
 def initialize_loadcell_log():
-	logFile = open('output_logs/log_' + unixtime_str() + '.txt', 'a')
+	logFile = open('/home/pi/Downloads/output_logs/log_' + unixtime_str() + '.txt', 'a')
 	commaSeparatedLoadCellCols = ",".join(["l" + str(i) for i in range(7)])
 	logFile.write("unixtime," + commaSeparatedLoadCellCols + "\n")
 	return(logFile)
