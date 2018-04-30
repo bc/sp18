@@ -18,7 +18,7 @@ class ZmqClass:
 		def run(self):
 			self.func()
 
-	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
+	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLines.
 	def SendLoadsFromSensors(self):
 	 	#instantiate the zmq connection to Unity as PUB 
 		context = zmq.Context()
@@ -46,6 +46,8 @@ class ZmqClass:
 		self.hasUpdated = False
 		self.zmqSender = self.ZmqThread(self.SendLoadsFromSensors, self.lca)
 		self.zmqSender.start()
+		print("Current libzmq version is %s" % zmq.zmq_version())
+		print("Current  pyzmq version is %s" % zmq.__version__)
 	
 	def isCollectingData(self):
 		return abs(time.time() - self.startTime) > 2.5 and self.hasUpdated is True

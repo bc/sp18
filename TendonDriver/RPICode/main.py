@@ -48,7 +48,7 @@ from datetime import datetime
 @description primary threshold control loop that maintains tensions based on composed commands
 @param lca Initialized loadCellAccumulator (See LoadCellAccumulator.py)
 @param zmq a generator that supplies values for the threshold loop
-@param sleep_time the ammount of time to sleep between threshold cycles
+@param sleep_time the amount of time to sleep between threshold cycles
 @param threshold the actual threshold -- if the value is within threshold of the target, it goes to 0
 @param speed overal speed
 """
