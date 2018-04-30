@@ -1,3 +1,4 @@
+import pdb
 import pickle 
 import sys
 import zmq
@@ -16,10 +17,10 @@ context = zmq.Context()
 socket = context.socket(zmq.SUB)
 
 print("Collecting updates from weather server...")
-socket.connect("tcp://localhost:%s" % port)
+socket.connect("tcp://169.254.12.240:%s" % port)
 
 if len(sys.argv) > 2:
-    socket.connect("tcp://localhost:%s" % port1)
+    socket.connect("tcp://169.254.12.240:%s" % port1)
 
 topicfilter = b"map"
 socket.setsockopt(zmq.SUBSCRIBE, topicfilter)
@@ -27,7 +28,10 @@ socket.setsockopt(zmq.SUBSCRIBE, topicfilter)
 # Process 5 updates
 while 1:
     [topic,msg] = socket.recv_multipart()
-    msg2 = pickle.loads(msg)
+    msg2 = pickle.loads(msg, encoding="latin1")
     print(topic)
     # print(msg)
     print(msg2)
+    # except UnicodeDecodeError:
+    #     print('UnicodeDecodeError')
+    #     pass
