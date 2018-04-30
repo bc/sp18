@@ -113,11 +113,13 @@ try:
         multList[i], offsets[i]) for i in range(len(offsets))]
     lca.lcpArray = lcpArray
     threshold_loop(lca, zmq_generator(zmq_recv),
-                   sleep_time=0.001, threshold=0.001, speed=5000)
+                   sleep_time=0.01, threshold=0.001, speed=5000)
 except KeyboardInterrupt:
+    pass
+finally:
     stop_all_motors(pwm_controller_list)
     zmq_send.socket.close()
     zmq_recv.socket.close()
     zmq_send.zmq_ctx_destroy()
     zmq_recv.zmq_ctx_destroy()
-    GPIO.cleanup()
+    GPIO.cleanup()    
