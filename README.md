@@ -30,3 +30,30 @@ on rpi, to keep ssh open
 ```
 
 ```
+
+# Contributors
+Lead
+-@bc
+
+EEG
+-@marjanin
+
+Biomimetic-Design
+-@mayumiishikawa
+-@brandonmiura
+
+Tendon-Drive Networking
+-@tstroobosscher
+
+Scientific-Analytics
+-@medvidov2786
+
+TendonDrive
+-@sofiahurtado
+-@fmdunlap
+-@nterrile
+
+VR-Modeling
+-@ArfanR
+-@kujustin
+-@ceubanks
