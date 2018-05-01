@@ -25,6 +25,7 @@ def publish_loop(initialized_socket, sleep_time_seconds):
         pickled_contents = pickle.dumps(messagedata)
         initialized_socket.send_multipart([topic, pickled_contents])
         time.sleep(sleep_time_seconds)
+        count += 1
         if count % 1000==0:
             print(count)
 
