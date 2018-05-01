@@ -68,7 +68,7 @@ class ZmqClassRecv:
 		self.measuredLoads = []
 		self.updatedLoads = " " 
 		self.startTime = time.time()
-		self.targetForces = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+		self.targetForces = [1.0,1.0,1.0,1.0,1.0,1.0,1.0]
 		self.hasUpdated = False
 		self.zmqRecv = self.ZmqRecvThread(self.RecvTargetForces)
 		self.zmqRecv.start()
