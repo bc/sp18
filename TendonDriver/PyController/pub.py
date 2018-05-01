@@ -16,6 +16,7 @@ socket.bind("tcp://*:%s" % port)
 
 
 def publish_loop(initialized_socket, sleep_time_seconds):
+    count = 0
     while True:
         topic = b"map"
         messagedata = np.random.uniform(0.0, 10.0, 100)
@@ -24,7 +25,8 @@ def publish_loop(initialized_socket, sleep_time_seconds):
         pickled_contents = pickle.dumps(messagedata)
         initialized_socket.send_multipart([topic, pickled_contents])
         time.sleep(sleep_time_seconds)
-
+        if count % 1000==0:
+            print(count)
 
 try:
     publish_loop(socket, 0.0)
