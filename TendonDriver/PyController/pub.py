@@ -27,7 +27,7 @@ def publish_loop(initialized_socket, sleep_time_seconds):
 
 
 try:
-    publish_loop(socket, 1e-2)
+    publish_loop(socket, 0.0)
 except KeyboardInterrupt:
     socket.unbind()
     socket.close()
