@@ -20,7 +20,7 @@ def publish_loop(initialized_socket, sleep_time_seconds):
         topic = b"map"
         messagedata = np.random.uniform(0.0, 10.0, 7)
         # print("%d %d" % (topic, messagedata[0]))
-        print(messagedata)
+        # print(messagedata)
         pickled_contents = pickle.dumps(messagedata)
         initialized_socket.send_multipart([topic, pickled_contents])
         time.sleep(sleep_time_seconds)
