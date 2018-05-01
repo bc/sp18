@@ -33,9 +33,14 @@ while 1:
     [topic, msg] = socket.recv_multipart()
     msg2 = pickle.loads(msg, encoding="latin1")
     count += 1
-    if count % 1000==0:
+    if count % 1==0:
         elapsed_time = time.time() - start
         amortized_rate = count / elapsed_time
         print("Msg: %s |Messages per second: %s" % (count,str(amortized_rate)))
+        #flush the amortized rate buffer every 5 seconds
+        if elapsed_time > 5:
+            start = time.time()
+            count = 0
+        print(msg2)
     # print(topic)
     # print(msg2)
