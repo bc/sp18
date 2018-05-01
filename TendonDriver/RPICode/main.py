@@ -8,6 +8,7 @@ from genericHelperFunctions import *
 from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
 from logCSV import *
+from pubstream import instantiate_zmq_publisher, publish_observation
 
 # If, god forbid, there's some weird GPIO import error which, apparently
 # happens??
@@ -53,9 +54,12 @@ from datetime import datetime
 @param threshold the actual threshold -- if the value is within threshold of the target, it goes to 0
 @param speed overal speed
 """
+import cProfile
+import re
+import gc
+gc.disable()
 
-
-def threshold_loop(lca, zmq, sleep_time, threshold, speed):
+def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
     np.set_printoptions(precision=3, suppress=True)
     global pwm_controller_list
     startingTime = datetime.now()
@@ -70,10 +74,16 @@ def threshold_loop(lca, zmq, sleep_time, threshold, speed):
         deltaTime = datetime.now() - startingTime
         startingTime = datetime.now()
         loads_to_logCSVline(logFile, measuredForces, targetForces, commands, )
-        if counter % 10 == 0:
-            observation = np.vstack([measuredForces, targetForces, commands])
+        observation = (np.vstack([measuredForces, targetForces, commands]), time.time())
+        tic = datetime.now()
+        publish_observation(pubstream_socket, observation)
+        toc = datetime.now()
+        tic2 = datetime.now()
+        if counter % 1000 == 0:
             print(observation)
             print("deltaTime: " + str(deltaTime))
+            print("tictoc: " + str(toc-tic))
+            print("tictoc2: " + str(tic2-toc))
             print("-------------------")
             counter = 0  # reset
         counter += 1
@@ -97,6 +107,7 @@ try:
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')
     zmq_send = ZmqClass(lca)
+    pubstream_socket = instantiate_zmq_publisher(12345)
     print('Socket for sending load cell values: Acquired')
     print('Initializing threshold loop')
     while not lca.isCollectingData():
@@ -115,14 +126,17 @@ try:
     lcpArray = [LoadCellAccumulator.LoadCellCalibrationProfile(
         multList[i], offsets[i]) for i in range(len(offsets))]
     lca.lcpArray = lcpArray
-    threshold_loop(lca, zmq_generator(zmq_recv),
-                   sleep_time=0.01, threshold=0.001, speed=5000)
+    cProfile.run('threshold_loop(lca, zmq_generator(zmq_recv), pubstream_socket, sleep_time=0.001, threshold=0.001, speed=1000)')
+    # threshold_loop(lca, zmq_generator(zmq_recv), pubstream_socket,
+                   # sleep_time=0.01, threshold=0.001, speed=5000)
 except KeyboardInterrupt:
-    print("KeyboardInterrupt")
-finally:
+    print("except KeyboardInterrupt")
     stop_all_motors(pwm_controller_list)
     zmq_send.socket.close()
     zmq_recv.socket.close()
     zmq_send.zmq_ctx_destroy()
     zmq_recv.zmq_ctx_destroy()
     GPIO.cleanup()
+finally:
+    print('finally')
+    pass

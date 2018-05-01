@@ -14,7 +14,6 @@ context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:%s" % port)
 
-
 def publish_loop(initialized_socket, sleep_time_seconds):
     count = 0
     while True:
