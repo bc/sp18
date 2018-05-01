@@ -56,8 +56,8 @@ from datetime import datetime
 """
 import cProfile
 import re
-
-
+import gc
+gc.disable()
 
 def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
     np.set_printoptions(precision=3, suppress=True)
@@ -126,7 +126,7 @@ try:
     lcpArray = [LoadCellAccumulator.LoadCellCalibrationProfile(
         multList[i], offsets[i]) for i in range(len(offsets))]
     lca.lcpArray = lcpArray
-    cProfile.run('threshold_loop(lca, zmq_generator(zmq_recv), pubstream_socket, sleep_time=0.01, threshold=0.001, speed=5000)')
+    cProfile.run('threshold_loop(lca, zmq_generator(zmq_recv), pubstream_socket, sleep_time=0.001, threshold=0.001, speed=1000)')
     # threshold_loop(lca, zmq_generator(zmq_recv), pubstream_socket,
                    # sleep_time=0.01, threshold=0.001, speed=5000)
 except KeyboardInterrupt:
