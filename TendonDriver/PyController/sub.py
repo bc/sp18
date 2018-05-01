@@ -6,13 +6,12 @@ import zmq
 
 ip = "169.254.12.240"
 port = "5556"
+
 if len(sys.argv) > 1:
-    port = sys.argv[1]
-    int(port)
+    ip = sys.argv[1]
 
 if len(sys.argv) > 2:
-    port1 = sys.argv[2]
-    int(port1)
+    port = sys.argv[2]
 
 # Socket to talk to server
 context = zmq.Context()
@@ -20,10 +19,9 @@ socket = context.socket(zmq.SUB)
 socket_string = "%s:%s" % (ip, port)
 
 print("Awaiting data from %s" % socket_string)
-socket.connect("tcp://" + socket_string)
 
-if len(sys.argv) > 2:
-    socket.connect("tcp://169.254.12.240:%s" % port1)
+#you can run this multiple times to receive from multiple ports
+socket.connect("tcp://" + socket_string)
 
 topic_filter = b"map"
 socket.setsockopt(zmq.SUBSCRIBE, topic_filter)
