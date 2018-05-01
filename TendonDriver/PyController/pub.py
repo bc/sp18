@@ -18,7 +18,7 @@ socket.bind("tcp://*:%s" % port)
 def publish_loop(initialized_socket, sleep_time_seconds):
     while True:
         topic = b"map"
-        messagedata = np.random.uniform(0.0, 10.0, 7)
+        messagedata = np.random.uniform(0.0, 10.0, 100)
         # print("%d %d" % (topic, messagedata[0]))
         # print(messagedata)
         pickled_contents = pickle.dumps(messagedata)
