@@ -7,6 +7,7 @@ import zmq
 ip = "169.254.12.240"
 port = "5556"
 
+
 if len(sys.argv) > 1:
     ip = sys.argv[1]
 
