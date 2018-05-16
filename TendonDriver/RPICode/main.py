@@ -4,6 +4,9 @@ from ZmqClassRecv import ZmqClassRecv
 import pdb
 import numpy as np
 import time
+import cProfile
+import re
+import gc
 from genericHelperFunctions import *
 from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
@@ -54,9 +57,7 @@ from datetime import datetime
 @param threshold the actual threshold -- if the value is within threshold of the target, it goes to 0
 @param speed overal speed
 """
-import cProfile
-import re
-import gc
+
 gc.disable()
 
 def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
@@ -76,6 +77,7 @@ def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
         loads_to_logCSVline(logFile, measuredForces, targetForces, commands, )
         observation = (np.vstack([measuredForces, targetForces, commands]), time.time())
         tic = datetime.now()
+        pdb.set_trace()
         publish_observation(pubstream_socket, observation)
         toc = datetime.now()
         tic2 = datetime.now()
