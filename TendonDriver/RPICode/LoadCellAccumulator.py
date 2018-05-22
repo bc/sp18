@@ -40,22 +40,25 @@ class LoadCellAccumulator:
     @title init NOT DIRECTLY CALLED. NO ARGS. Does standard setup.
     """
     def __init__(self, _numLoadCells = 7):
+        print "Initializing from LCA.py"
         self.numLoadCells = _numLoadCells
         self.measuredLoads = []
         self.ser = self.instantiate_arduino_listener()
+        print "SELF.SER", self.ser
         self.startTime = time.time()
         # load cell calibration profile
         self.hasUpdated = False
         self.loadCellDataCollector = self.loadCellThread(
             self.updateLoadsFromSensors)
         self.loadCellDataCollector.start()
+        print "measuredLoads Now: ", self.measuredLoads
         self.lcpArray = []
 
     """
     @title loadCellThread
     @description Just boilerplate to run threads for each of the load cells
     TBH still don't understand why we didn't just make LoadCellAccumulator implement threading
-    It would have made perfect sense as one big old thread since all the wrapper is 
+    It would have made perfect sense as one big old thread since all the wrapper is
     doing is creating a smaller internal thread to the larger outer class. ???
     """
     class loadCellThread(threading.Thread):
@@ -71,12 +74,14 @@ class LoadCellAccumulator:
     # Accepts slighly different lengths and orientations of the incoming data.
     # strict on string characteristics
     def serial_dataline_has_correct_composition(self, dataline):
-        correct_decimal_locations = find(dataline, ",") == [10, 21, 32, 43, 54, 65]
-        correct_length = len(dataline) in [78]
+        print "Dataline", dataline
+        correct_decimal_locations = find(dataline, ",") == [10, 21, 32, 43, 54, 65] ### The indices where commas are suppose to be; To ensure data is received n right format in case some comma gets dropped or length is'nt right ###
+        correct_length = len(dataline) in [78] 
         if not correct_length or not correct_decimal_locations:
             print('Nonstandard Dataformat received:')
             print("Length observed: %i"%len(dataline))
             print(find(dataline, ","))
+        print "correct_decimal_locations and correct_length", correct_decimal_locations, correct_length
         return(correct_decimal_locations and correct_length)
 
     def decode_and_split_to_list(self, line, numLoadCells):
@@ -96,6 +101,7 @@ class LoadCellAccumulator:
 
     def updateLoadsFromSensors(self, numLoadCells=7):
         for line in self.serial_generator(self.ser):
+            print "line from serial generator: ",line
             if self.serial_dataline_has_correct_composition(line):
                 try:
                     self.measuredLoads = self.decode_and_split_to_list(
@@ -133,6 +139,7 @@ class LoadCellAccumulator:
     # @param portname string, by default '/dev/ttyACM1'
     # @return an IO: wrapper around a Serial object.
     def instantiate_arduino_listener(self):
+        print "Instantiating Arduino"
         portname = self.findPortname()
         ser = serial.Serial(portname, 115200,
                             timeout=None,
@@ -157,6 +164,8 @@ class LoadCellAccumulator:
     """
     def get_calibratedTensions(self):
         loads = self.getLoadsArray()
+        print "Loads", loads
+        print "lcpArray", lcpArray
         calibratedTensions = [self.lcpArray[i].mv_to_kg(
             loads[i]) for i in range(len(self.lcpArray))]
         return(calibratedTensions)

@@ -11,16 +11,19 @@ import zmq
 import random
 
 class ZmqClassRecv:
-	
+
 	class ZmqRecvThread(threading.Thread):
 		def __init__(self, func):
+			print "Initializing ZmqRecvThread"
 			threading.Thread.__init__(self)
 			self.func = func
+
 		def run(self):
 			self.func()
 
 	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
 	def RecvTargetForces(self):
+		print "RecvTargetForces"
 		context = zmq.Context()
 		self.socket = context.socket(zmq.REQ)
 		self.socket.connect("tcp://192.168.2.1:5558")
@@ -32,15 +35,16 @@ class ZmqClassRecv:
 			poller = zmq.Poller()
 			poller.register(self.socket, zmq.POLLIN)
 			evt = dict(poller.poll(TIMEOUT))
+			print "evt", evt
 			if evt:
 				if evt.get(self.socket) == zmq.POLLIN:
 					rcvTargetForces = self.socket.recv(zmq.NOBLOCK)
-					# print('targetForces %s' % str(rcvTargetForces))
+					print('targetForces %s' % str(rcvTargetForces))
 					try:
 						targetForceList = [forceVal.strip() for forceVal in rcvTargetForces.split(',')]
 						prospectiveForceList = np.asarray(targetForceList).astype(np.float)
 						if self.forces_are_valid(prospectiveForceList):
-							# print(prospectiveForceList)
+							print(prospectiveForceList)
 							self.targetForces = prospectiveForceList
 					except UnicodeDecodeError:
 						pass
@@ -64,16 +68,17 @@ class ZmqClassRecv:
 		return(True)
 
 	def __init__(self):
+		print "Initializing ZmqClassRecv"
 		self.numLoadCells = 7
 		self.measuredLoads = []
-		self.updatedLoads = " " 
+		self.updatedLoads = " "
 		self.startTime = time.time()
 		self.targetForces = [0.5,0.5,0.5,0.5,0.5,0.5,0.5]
 		self.hasUpdated = False
 		self.zmqRecv = self.ZmqRecvThread(self.RecvTargetForces)
 		self.zmqRecv.start()
 
-	
+
 	def isCollectingData(self):
 		return abs(time.time() - self.startTime) > 2.5 and self.hasUpdated is True
 
@@ -81,7 +86,7 @@ class ZmqClassRecv:
 		while True:
 			yield serial_object.readline()
 		serial_object.close()
-		#returns most updated version of target forces 
+		#returns most updated version of target forces
 	def getTargetForces(self):
 			return(self.targetForces)
 
@@ -90,5 +95,3 @@ class ZmqClassRecv:
 #    Zmq = ZmqClassRecv(lca)
 #except KeyboardInterrupt:
 #    Zmq.zmqRecv.socket.close()
-	
-

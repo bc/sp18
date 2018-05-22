@@ -1,3 +1,4 @@
+###Checking atom
 import LoadCellAccumulator
 from ZmqClass import ZmqClass
 from ZmqClassRecv import ZmqClassRecv
@@ -77,7 +78,6 @@ def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
         loads_to_logCSVline(logFile, measuredForces, targetForces, commands, )
         observation = (np.vstack([measuredForces, targetForces, commands]), time.time())
         tic = datetime.now()
-        pdb.set_trace()
         publish_observation(pubstream_socket, observation)
         toc = datetime.now()
         tic2 = datetime.now()
@@ -104,10 +104,12 @@ def zmq_generator(zmq_recv):
 try:
     print('LoadCellAccumulator: Initialized')
     lca = LoadCellAccumulator.LoadCellAccumulator()
-
+    print "lca retuned from LCA.py", lca
     time.sleep(1)
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')
+    offsets = collectDataAtZeroLoad(lca)
+    print("Offsets: " + str(offsets))
     zmq_send = ZmqClass(lca)
     pubstream_socket = instantiate_zmq_publisher(12345)
     print('Socket for sending load cell values: Acquired')
@@ -123,8 +125,7 @@ try:
                 160329.5082,
                 376400.0000,
                 219232.7869]
-    offsets = collectDataAtZeroLoad(lca)
-    print("Offsets: " + str(offsets))
+
     lcpArray = [LoadCellAccumulator.LoadCellCalibrationProfile(
         multList[i], offsets[i]) for i in range(len(offsets))]
     lca.lcpArray = lcpArray
