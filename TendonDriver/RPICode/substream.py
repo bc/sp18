@@ -20,7 +20,7 @@ rollover_lt = 50
 ip = '10.42.0.82'
 port = '12345'
 
-def initialize_sub_socket(ip, port, topic_filter=b"map"):
+def initialize_sub_socket(topic_filter=b"map"):
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket_string = "%s:%s" % (ip, port)
@@ -78,7 +78,7 @@ def generate_figure():
 
     return (figlist)
 
-socket = initialize_sub_socket(ip, port)
+socket = initialize_sub_socket()
 
 btn_layout = row(radio_group)
 main_layout = row(generate_figure())

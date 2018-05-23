@@ -1,3 +1,4 @@
+
 from LoadCellAccumulator import LoadCellAccumulator
 import serial
 import pdb
@@ -32,7 +33,7 @@ class ZmqClass:
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
         # in future write code to find the correct IP address and port
-        self.socket.bind("tcp://%s:%s" %(ip, port)) ### tcp://192.168.2.10:5556 ###
+        self.socket.bind("tcp://192.168.2.10:5556") ### "tcp://%s:%s" %(ip, port) ###
 
         while True:
             if self.lca.isCollectingData():
