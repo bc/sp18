@@ -51,7 +51,6 @@ class LoadCellAccumulator:
         self.loadCellDataCollector = self.loadCellThread(
             self.updateLoadsFromSensors)
         self.loadCellDataCollector.start()
-        print "measuredLoads Now: ", self.measuredLoads
         self.lcpArray = []
 
     """
@@ -81,7 +80,7 @@ class LoadCellAccumulator:
             print('Nonstandard Dataformat received:')
             print("Length observed: %i"%len(dataline))
             print(find(dataline, ","))
-        print "correct_decimal_locations and correct_length", correct_decimal_locations, correct_length
+        #print "correct_decimal_locations and correct_length", correct_decimal_locations, correct_length
         return(correct_decimal_locations and correct_length)
 
     def decode_and_split_to_list(self, line, numLoadCells):
@@ -101,7 +100,7 @@ class LoadCellAccumulator:
 
     def updateLoadsFromSensors(self, numLoadCells=7):
         for line in self.serial_generator(self.ser):
-            print "line from serial generator: ",line
+            #print "line from serial generator: ",line
             if self.serial_dataline_has_correct_composition(line):
                 try:
                     self.measuredLoads = self.decode_and_split_to_list(
@@ -164,8 +163,7 @@ class LoadCellAccumulator:
     """
     def get_calibratedTensions(self):
         loads = self.getLoadsArray()
-        print "Loads", loads
-        print "lcpArray", lcpArray
+        #print "Loads", loads
         calibratedTensions = [self.lcpArray[i].mv_to_kg(
             loads[i]) for i in range(len(self.lcpArray))]
         return(calibratedTensions)

@@ -10,6 +10,9 @@ import numpy as np
 import zmq
 import random
 
+ip = '192.168.2.1'
+port = '5558'
+
 class ZmqClassRecv:
 
 	class ZmqRecvThread(threading.Thread):
@@ -24,9 +27,10 @@ class ZmqClassRecv:
 	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
 	def RecvTargetForces(self):
 		print "RecvTargetForces"
+		global ip, port
 		context = zmq.Context() ### Contexts help manage created sockets & the number of threads ZeroMQ uses behind the scenes. Create one when initializing a process and destroy when process terminates0. Can be shared between threads, in fact, are the only ZeroMQ objects that can safely do this ###
 		self.socket = context.socket(zmq.REQ)
-		self.socket.connect("tcp://192.168.2.1:5558")
+		self.socket.connect("tcp://%s:%s" %(ip, port)) ### tcp://192.168.2.1:5558 ###
 		TIMEOUT = 10000
 		self.start_time = time.time()
 

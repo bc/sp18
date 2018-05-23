@@ -9,6 +9,8 @@ from serial.tools import list_ports
 import numpy as np
 import zmq
 
+ip = '192.168.2.10'
+port = '5556'
 
 class ZmqClass:
 
@@ -26,10 +28,11 @@ class ZmqClass:
     # returns. uses readLines.
     def SendLoadsFromSensors(self):
         # instantiate the zmq connection to Unity as PUB
+        global ip, port
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
         # in future write code to find the correct IP address and port
-        self.socket.bind("tcp://192.168.2.10:5556")
+        self.socket.bind("tcp://%s:%s" %(ip, port)) ### tcp://192.168.2.10:5556 ###
 
         while True:
             if self.lca.isCollectingData():
