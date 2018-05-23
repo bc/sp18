@@ -107,7 +107,7 @@ try:
     offsets = collectDataAtZeroLoad(lca)
     print("Offsets: " + str(offsets))
     zmq_send = ZmqClass(lca)
-    pubstream_socket = instantiate_zmq_publisher(12345)
+    pubstream_socket = instantiate_zmq_publisher()
     print('Socket for sending load cell values: Acquired')
     print('Initializing threshold loop')
     while not lca.isCollectingData():

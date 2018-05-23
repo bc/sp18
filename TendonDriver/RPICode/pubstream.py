@@ -31,7 +31,7 @@ def publish_observation(init_socket, messagedata):
 
     try:
         init_socket.send_multipart([topic, pickled_contents])
-        time.sleep(0.1)
+        #time.sleep(0.1)
     except Exception:
         print('Issue in publish_observation')
 
