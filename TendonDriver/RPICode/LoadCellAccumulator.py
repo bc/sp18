@@ -44,7 +44,7 @@ class LoadCellAccumulator:
         self.numLoadCells = _numLoadCells
         self.measuredLoads = []
         self.ser = self.instantiate_arduino_listener()
-        print "SELF.SER", self.ser
+        #print "SELF.SER", self.ser
         self.startTime = time.time()
         # load cell calibration profile
         self.hasUpdated = False
@@ -74,9 +74,9 @@ class LoadCellAccumulator:
     # Accepts slighly different lengths and orientations of the incoming data.
     # strict on string characteristics
     def serial_dataline_has_correct_composition(self, dataline):
-        print "Dataline", dataline
+        #print "Dataline", dataline
         correct_decimal_locations = find(dataline, ",") == [10, 21, 32, 43, 54, 65] ### The indices where commas are suppose to be; To ensure data is received n right format in case some comma gets dropped or length is'nt right ###
-        correct_length = len(dataline) in [78] 
+        correct_length = len(dataline) in [78]
         if not correct_length or not correct_decimal_locations:
             print('Nonstandard Dataformat received:')
             print("Length observed: %i"%len(dataline))
@@ -125,7 +125,7 @@ class LoadCellAccumulator:
 
     #@return the arduino path to usb. will have ACM in the string name
     def findPortname(self):
-        comports = [x[0] for x in list_ports.comports()]
+        comports = [x[0] for x in list_ports.comports()] ### list_ports.comports() returns all the available serial ports ###
         ACMPorts = [port for port in comports if "ACM" in port]
         self.err_if_arduino_not_plugged_in(ACMPorts)
         print('Arduino Connection: Good')

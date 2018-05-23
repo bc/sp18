@@ -1,4 +1,3 @@
-###Checking atom
 import LoadCellAccumulator
 from ZmqClass import ZmqClass
 from ZmqClassRecv import ZmqClassRecv
@@ -20,12 +19,10 @@ try:
     import RPi.GPIO as GPIO
 except RuntimeError:
     print("Error! Must sudo!")
-pwm_controller_list = gen_pwm_controller_list(
-    [(3, 5), (13, 15), (11, 12), (18, 16), (19, 21), (33, 36), (32, 31)])
+pwm_controller_list = gen_pwm_controller_list() ### Removed arg for this fn ###
 
 # Zmq is some zmq_generator that has input values coming in on a readline
 # like basis
-
 
 def compose_trigger_command(measuredForce, targetForce, threshold, fixed_speed):
     if np.abs(measuredForce - targetForce) < threshold:
@@ -42,7 +39,7 @@ def compose_P_command(measuredForce, targetForce, threshold, p):
         # print('inthreshold')
         return(0)
     residual = targetForce - measuredForce
-    return(p * residual)
+    return(p * residual) ### p is spd ###
 
 
 from datetime import datetime
@@ -93,7 +90,6 @@ def threshold_loop(lca, zmq, pubstream_socket, sleep_time, threshold, speed):
 
 # produce array of values called val
 
-
 def zmq_generator(zmq_recv):
     while True:
         reference_forces = zmq_recv.getTargetForces()
@@ -104,7 +100,7 @@ def zmq_generator(zmq_recv):
 try:
     print('LoadCellAccumulator: Initialized')
     lca = LoadCellAccumulator.LoadCellAccumulator()
-    print "lca retuned from LCA.py", lca
+    #print "lca retuned from LCA.py", lca
     time.sleep(1)
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')

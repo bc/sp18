@@ -24,7 +24,7 @@ class ZmqClassRecv:
 	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
 	def RecvTargetForces(self):
 		print "RecvTargetForces"
-		context = zmq.Context()
+		context = zmq.Context() ### Contexts help manage created sockets & the number of threads ZeroMQ uses behind the scenes. Create one when initializing a process and destroy when process terminates0. Can be shared between threads, in fact, are the only ZeroMQ objects that can safely do this ###
 		self.socket = context.socket(zmq.REQ)
 		self.socket.connect("tcp://192.168.2.1:5558")
 		TIMEOUT = 10000
@@ -41,6 +41,7 @@ class ZmqClassRecv:
 					rcvTargetForces = self.socket.recv(zmq.NOBLOCK)
 					print('targetForces %s' % str(rcvTargetForces))
 					try:
+						### convert the received target forces and convert them into a np array of floats
 						targetForceList = [forceVal.strip() for forceVal in rcvTargetForces.split(',')]
 						prospectiveForceList = np.asarray(targetForceList).astype(np.float)
 						if self.forces_are_valid(prospectiveForceList):
@@ -50,13 +51,14 @@ class ZmqClassRecv:
 						pass
 				continue
 			time.sleep(0.5)
-			self.socket.close()
-			self.socket = context.socket(zmq.REQ)
-			self.socket.connect("tcp://192.168.2.1:5558")
+			### commenting reconnecting socket within while ###
+			#self.socket = context.socket(zmq.REQ)
+			#self.socket.connect("tcp://192.168.2.1:5558")
+		self.socket.close()
 
 	def possible_to_absolute_value_all_vals(self, prospectiveForceList):
 		try:
-			absolute_valued = [np.abs(x) for x in prospectiveForceList]
+			absolute_valued = [np.abs(x) for x in prospectiveForceList] ### uses np.abs() to check if received force is a valid no. ###
 			return(True)
 		except:
 			return(False)
@@ -78,15 +80,9 @@ class ZmqClassRecv:
 		self.zmqRecv = self.ZmqRecvThread(self.RecvTargetForces)
 		self.zmqRecv.start()
 
+	### Removed the serial_generator() and isCollectingData() ####
 
-	def isCollectingData(self):
-		return abs(time.time() - self.startTime) > 2.5 and self.hasUpdated is True
-
-	def serial_generator(self, serial_object):
-		while True:
-			yield serial_object.readline()
-		serial_object.close()
-		#returns most updated version of target forces
+	#returns most updated version of target forces
 	def getTargetForces(self):
 			return(self.targetForces)
 

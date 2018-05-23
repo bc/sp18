@@ -2,7 +2,7 @@ import zmq
 import cPickle
 import numpy as np
 
-### Currently just spewing random data but meant to help in Visualising data sent from Rpi ###
+### Currently just spewing random data but meant to help in Visualising the data sent from Rpi ###
 def instantiate_zmq_publisher(port=12345):
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
@@ -12,7 +12,6 @@ def instantiate_zmq_publisher(port=12345):
 
 
 sample_data = np.random.uniform(0.0, 10.0, 100)
-
 
 def publish_observation(initialized_socket, messagedata=sample_data):
     topic = b"map"

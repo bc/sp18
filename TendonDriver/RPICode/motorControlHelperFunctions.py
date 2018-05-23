@@ -62,7 +62,7 @@ def changeFrequencyAndDirection(pwm_controller, commandTension, motorNum, minMot
         pwm_controller.ChangeDutyCycle(0)
         return
     else:
-        pwm_controller.ChangeDutyCycle(50)
+        pwm_controller.ChangeDutyCycle(50)  ### To adjust the value of the PWM output ###
     pwm_controller.ChangeFrequency(np.abs(commandTension))
     if commandTension < 0:
         GPIO.output(stepper_step_dir[motorNum][1], GPIO.LOW)
@@ -70,7 +70,7 @@ def changeFrequencyAndDirection(pwm_controller, commandTension, motorNum, minMot
         GPIO.output(stepper_step_dir[motorNum][1], GPIO.HIGH)
 
 
-def gen_pwm_controller_list(list_of_step_dir_tuples):
-    pwm_controller_list = [set_GPIO_settings(
-        motor) for motor in list_of_step_dir_tuples]
+def gen_pwm_controller_list():
+    global stepper_step_dir
+    pwm_controller_list = [set_GPIO_settings(motor) for motor in stepper_step_dir]
     return(pwm_controller_list)
