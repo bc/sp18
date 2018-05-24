@@ -17,13 +17,8 @@ def instantiate_zmq_publisher(port=12345):
 
 def publish_observation(init_socket, messagedata):
     topic = b"map"
-    measuredForces = []
-    targetForces = []
-    commands = []
-    measuredForces.append([random.uniform(0,1) for i in range(7)])
-    targetForces.append([random.uniform(0,1) for i in range(7)])
-    commands.append([random.uniform(1,500) for i in range(7)])
-    messagedata = (np.vstack([measuredForces, targetForces, commands]), time.time())
+
+    # messagedata = (np.vstack([measuredForces, targetForces, commands]), time.time())
     #print messagedata #print messagedata[0][0]
     #print("%d %d" % (topic, messagedata[0]))
     pickled_contents = pickle.dumps(messagedata)
