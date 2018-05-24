@@ -13,7 +13,7 @@ import random
 import pdb
 
 
-source = ColumnDataSource(dict(x=[], muscle_0=[], muscle_1=[], muscle_2=[]))
+source = ColumnDataSource(dict(x=[], muscle_0=[], muscle_1=[], muscle_2=[], muscle_3=[], muscle_4=[],muscle_5=[], muscle_6=[] ))
 radio_group = RadioGroup(labels=["50", "100", "200", "500", "1000"], active=0)
 rollover_lt = 50
 
@@ -45,21 +45,24 @@ def update_data():
     global ctr, socket, source, rollover_lt
     [topic, msg] = socket.recv_multipart()
     message = pickle.loads(msg, encoding="latin1")
-    #print("MESSAGE", message)
+    # print("MESSAGE", message)
+    print("MESSAGE[0][0]", message[0][0])
+    # print("MESSAGE[0][3]", message[0][3], type(message[0][3]))
 
     ctr = list(range(len(message[0][0])))
     # measuredForces = message[0][0]
     # targetForces = message[0][1]
     # commands = message[0][2]
 
-    new_data = dict(x=[ctr], muscle_0=[message[0][0]], muscle_1=[message[0][1]], muscle_2 = [message[0][2]])
+    #new_data = dict(x=[ctr], muscle_0=[message[0][0]], muscle_1=[message[0][1]], muscle_2 = [message[0][2]])
+    new_data = dict(x=[ctr],muscle_0=[message[0][0][0]],muscle_1=[message[0][0][1]],muscle_2=[message[0][0][2]],muscle_3=[message[0][0][3]],muscle_4=[message[0][0][4]],muscle_5=[message[0][0][5]],muscle_6=[message[0][0][6]])
     source.stream(new_data, rollover_lt)
     print("streamed data: ",len(source.data['x']))
 
 
 def update():
     global main_layout
-    for i in range(3):
+    for i in range(7):
         main_layout.children[i] = generate_figure()[i]
 
 def generate_figure():
@@ -68,8 +71,7 @@ def generate_figure():
     colors = ["#762a83","#76EEC6","#53868B","#FF1493","#ADFF2F","#292421","#FFE1FF"]
     figlist = []
 
-    for i in range(3):
-        global figlist
+    for i in range(7):
         fig = figure(plot_width=250, plot_height=250, title=None)
         muscle = 'muscle_%s' %i
         hist, edges = np.histogram(source.data[muscle])
