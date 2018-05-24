@@ -21,6 +21,7 @@ ip = '10.42.0.82'
 port = '12345'
 
 def initialize_sub_socket(topic_filter=b"map"):
+    global ip, port
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket_string = "%s:%s" % (ip, port)
@@ -69,7 +70,6 @@ def generate_figure():
     figlist = []
 
     for i in range(3):
-        global figlist
         fig = figure(plot_width=250, plot_height=250, title=None)
         muscle = 'muscle_%s' %i
         hist, edges = np.histogram(source.data[muscle])
