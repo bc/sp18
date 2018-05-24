@@ -1,0 +1,46 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=DRV_8V2
+*Date=10:52:05
+*CreatedBy=Fritzing 0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;;2.16696;-46.89;0;Bottom;Hole3
+2;;;12.6562;-25.808;-90;Bottom;TXT5
+3;;;36.7392;-17.5389;0;Bottom;Via1
+4;;;40.8657;-18.8077;90;Bottom;TXT1
+5;;;29.3544;-21.3959;0;Bottom;Via6
+6;;;26.113;-1.1589;0;Bottom;TXT2
+7;;;44.2651;-44.5037;0;Bottom;TXT3
+8;;;47.0403;-46.89;0;Bottom;Hole2
+9;;;12.5151;-25.3471;0;Bottom;Via9
+10;;;17.6892;-11.6593;0;Bottom;Via3
+11;;;12.421;-9.36387;-90;Bottom;TXT6
+12;;;2.16696;-25.1589;90;Bottom;TXT8
+13;100μF;0807 [SMD, electrolytic];39.5144;-8.59446;0;Bottom;C5
+14;;;22.2753;-11.6122;0;Bottom;Via2
+15;;screwterminal-3.5mm-4_lock;45.5409;-36.1001;-90;Bottom;
+16;;;18.8181;-25.5352;0;Bottom;Via8
+17;;screwterminal-3.5mm-4_lock;7.9524;-40.9633;90;Bottom; 
+18;;screwterminal-3.5mm-4_lock;45.7234;-18.9971;-90;Bottom; 
+19;;;40.8079;-22.3837;0;Bottom;Via10
+20;100μF;0807 [SMD, electrolytic];35.4692;-27.6445;0;Bottom;C2
+21;;SO16;23.2396;-12.553;90;Bottom;Pololu A1
+22;;screwterminal-3.5mm-4_lock;7.98115;-25.6235;90;Bottom; 
+23;;;12.4212;-40.2108;-90;Bottom;TXT4
+24;;;47.0403;-3.71002;0;Bottom;Hole1
+25;;;29.1192;-29.4393;0;Bottom;Via5
+26;;SO16;26.9555;-40.0226;90;Bottom;Pololu A0
+27;;screwterminal-3.5mm-4_lock;7.99956;-10.06;90;Bottom; 
+28;;;40.8062;-36.3144;90;Bottom;TXT4
+29;;;45.9114;-27.4227;0;Bottom;TXT7
+30;;;16.3957;-31.7206;0;Bottom;Via7
+31;;;2.16696;-3.71002;0;Bottom;Hole4
