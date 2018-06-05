@@ -12,6 +12,7 @@ from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
 from logCSV import *
 from pubstream import instantiate_zmq_publisher, publish_observation
+from referenceClient import push_randomRefForce
 
 # If, god forbid, there's some weird GPIO import error which, apparently
 # happens??
@@ -102,6 +103,7 @@ try:
     lca = LoadCellAccumulator.LoadCellAccumulator()
     #print "lca retuned from LCA.py", lca
     time.sleep(1)
+    push_randomRefForce()
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')
     offsets = collectDataAtZeroLoad(lca)
