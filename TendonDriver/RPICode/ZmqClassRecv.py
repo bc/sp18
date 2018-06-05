@@ -9,10 +9,11 @@ from serial.tools import list_ports
 import numpy as np
 import zmq
 import random
+import pickle
 
 
 #ip = '192.168.2.1'
-ip = '127.0.0.1'
+ip = '10.42.0.1'
 port = '5558'
 
 class ZmqClassRecv:
@@ -44,11 +45,13 @@ class ZmqClassRecv:
 				if evt:
 					if evt.get(self.socket) == zmq.POLLIN:
 						rcvReferenceForces = self.socket.recv(zmq.NOBLOCK)
+						rcvReferenceForces = (pickle.loads(rcvReferenceForces))
+						rcvReferenceForces = rcvReferenceForces[0]
 						print('newReferenceForces %s' % str(rcvReferenceForces))
 						try:
 							### convert the received target forces and convert them into a np array of floats
-							referenceForceList = [forceVal.strip() for forceVal in rcvReferenceForces.split(',')]
-							prospectiveForceList = np.asarray(referenceForceList).astype(np.float)
+							#referenceForceList = [forceVal.strip() for forceVal in rcvReferenceForces.split(',')]
+							prospectiveForceList = np.asarray(rcvReferenceForces).astype(np.float)
 							if self.forces_are_valid(prospectiveForceList):
 								print(prospectiveForceList)
 								self.referenceForces = prospectiveForceList
