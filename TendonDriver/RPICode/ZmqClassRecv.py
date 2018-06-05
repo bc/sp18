@@ -11,7 +11,8 @@ import zmq
 import random
 
 
-ip = '192.168.2.1'
+#ip = '192.168.2.1'
+ip = '127.0.0.1'
 port = '5558'
 
 class ZmqClassRecv:
@@ -27,37 +28,36 @@ class ZmqClassRecv:
 	def RecvTargetForces(self):
 		#print "RecvTargetForces"
 		global ip, port
-		context = zmq.Context() ### Contexts help manage created sockets & the number of threads ZeroMQ uses behind the scenes. Create one when initializing a process and destroy when process terminates0. Can be shared between threads, in fact, are the only ZeroMQ objects that can safely do this ###
-		self.socket = context.socket(zmq.REQ)
-		self.socket.connect("tcp://%s:%s" %(ip, port)) ### "tcp://%s:%s" %(ip, port) ### "tcp://192.168.2.1:5558"
-		TIMEOUT = 10000
-		self.start_time = time.time()
-
-		while True:
-			self.socket.send_string("request")
-			poller = zmq.Poller()
-			poller.register(self.socket, zmq.POLLIN)
-			evt = dict(poller.poll(TIMEOUT))
-			#print "evt", evt
-			if evt:
-				if evt.get(self.socket) == zmq.POLLIN:
-					rcvTargetForces = self.socket.recv(zmq.NOBLOCK)
-					print('targetForces %s' % str(rcvTargetForces))
-					try:
-						### convert the received target forces and convert them into a np array of floats
-						targetForceList = [forceVal.strip() for forceVal in rcvTargetForces.split(',')]
-						prospectiveForceList = np.asarray(targetForceList).astype(np.float)
-						if self.forces_are_valid(prospectiveForceList):
-							print(prospectiveForceList)
-							self.targetForces = prospectiveForceList
-					except UnicodeDecodeError:
-						pass
-				continue
-			time.sleep(0.5)
-			### commenting reconnecting socket within while
-			self.socket.close()
+		try:
+			context = zmq.Context()
 			self.socket = context.socket(zmq.REQ)
-			self.socket.connect("tcp://192.168.2.1:5558")
+			self.socket.connect("tcp://%s:%s" %(ip, port)) #"tcp://192.168.2.1:5558"
+			TIMEOUT = 10000
+			self.start_time = time.time()
+
+			while True:
+				self.socket.send_string("request")
+				poller = zmq.Poller()
+				poller.register(self.socket, zmq.POLLIN)
+				evt = dict(poller.poll(TIMEOUT))
+				#print "evt", evt
+				if evt:
+					if evt.get(self.socket) == zmq.POLLIN:
+						rcvReferenceForces = self.socket.recv(zmq.NOBLOCK)
+						print('newReferenceForces %s' % str(rcvReferenceForces))
+						try:
+							### convert the received target forces and convert them into a np array of floats
+							referenceForceList = [forceVal.strip() for forceVal in rcvReferenceForces.split(',')]
+							prospectiveForceList = np.asarray(referenceForceList).astype(np.float)
+							if self.forces_are_valid(prospectiveForceList):
+								print(prospectiveForceList)
+								self.referenceForces = prospectiveForceList
+						except UnicodeDecodeError:
+							pass
+					continue
+				time.sleep(0.5)
+		except KeyboardInterrupt:
+			self.socket.close()
 
 	def possible_to_absolute_value_all_vals(self, prospectiveForceList):
 		try:
@@ -78,7 +78,7 @@ class ZmqClassRecv:
 		self.measuredLoads = []
 		self.updatedLoads = " "
 		self.startTime = time.time()
-		self.targetForces = [0.5,0.5,0.5,0.5,0.5,0.5,0.5]
+		self.referenceForces = [0.5,0.5,0.5,0.5,0.5,0.5,0.5]
 		self.hasUpdated = False
 		self.zmqRecv = self.ZmqRecvThread(self.RecvTargetForces)
 		self.zmqRecv.start()
@@ -86,8 +86,9 @@ class ZmqClassRecv:
 	### Removed the serial_generator() and isCollectingData() ####
 
 	#returns most updated version of target forces
+	#TODO change targetForces to referenceForces
 	def getTargetForces(self):
-			return(self.targetForces)
+			return(self.referenceForces)
 
 #try:
 #    lca = LoadCellAccumulator()
