@@ -11,9 +11,6 @@ import zmq
 import random
 import pickle
 
-
-#ip = '192.168.2.1'
-ip = '10.42.0.1'
 port = '5558'
 
 class ZmqClassRecv:
@@ -28,16 +25,15 @@ class ZmqClassRecv:
 	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
 	def RecvTargetForces(self):
 		#print "RecvTargetForces"
-		global ip, port
+		global port
 		try:
 			context = zmq.Context()
-			self.socket = context.socket(zmq.REQ)
-			self.socket.connect("tcp://%s:%s" %(ip, port)) #"tcp://192.168.2.1:5558"
+			self.socket = context.socket(zmq.REP)
+			self.socket.bind("tcp://*:%s" %port) 
 			TIMEOUT = 10000
 			self.start_time = time.time()
 
 			while True:
-				self.socket.send_string("request")
 				poller = zmq.Poller()
 				poller.register(self.socket, zmq.POLLIN)
 				evt = dict(poller.poll(TIMEOUT))
@@ -47,6 +43,7 @@ class ZmqClassRecv:
 						rcvReferenceForces = self.socket.recv(zmq.NOBLOCK)
 						rcvReferenceForces = (pickle.loads(rcvReferenceForces))
 						rcvReferenceForces = rcvReferenceForces[0]
+						self.socket.send_string("received newRefForce")
 						print('newReferenceForces %s' % str(rcvReferenceForces))
 						try:
 							### convert the received target forces and convert them into a np array of floats
