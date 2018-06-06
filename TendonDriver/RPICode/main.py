@@ -106,8 +106,13 @@ try:
     #push_randomRefForce()
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')
+    #TODO find source for this error
+    #try:
+    #pdb.set_trace()
     offsets = collectDataAtZeroLoad(lca)
     print("Offsets: " + str(offsets))
+    #except:
+    #print("ERROR with collectDataAtZeroLoad: Must Restart TendonDriver")
     zmq_send = ZmqClass(lca)
     pubstream_socket = instantiate_zmq_publisher()
     print('Socket for sending load cell values: Acquired')
