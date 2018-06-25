@@ -80,7 +80,7 @@ class LoadCellAccumulator:
             print('Nonstandard Dataformat received:')
             print("Length observed: %i"%len(dataline))
             print(find(dataline, ","))
-        #print "correct_decimal_locations and correct_length", correct_decimal_locations, correct_length
+
         return(correct_decimal_locations and correct_length)
 
     def decode_and_split_to_list(self, line, numLoadCells):

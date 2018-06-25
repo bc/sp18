@@ -24,12 +24,11 @@ class ZmqClassRecv:
 
 	# extracts the loads from the sensors via CSV splitting and carriage returns. uses readLIies.
 	def RecvTargetForces(self):
-		#print "RecvTargetForces"
 		global port
 		try:
 			context = zmq.Context()
 			self.socket = context.socket(zmq.REP)
-			self.socket.bind("tcp://*:%s" %port) 
+			self.socket.bind("tcp://*:%s" %port)
 			TIMEOUT = 10000
 			self.start_time = time.time()
 
@@ -37,7 +36,7 @@ class ZmqClassRecv:
 				poller = zmq.Poller()
 				poller.register(self.socket, zmq.POLLIN)
 				evt = dict(poller.poll(TIMEOUT))
-				#print "evt", evt
+
 				if evt:
 					if evt.get(self.socket) == zmq.POLLIN:
 						rcvReferenceForces = self.socket.recv(zmq.NOBLOCK)
@@ -65,6 +64,7 @@ class ZmqClassRecv:
 			return(True)
 		except:
 			return(False)
+
 	def forces_are_valid(self, prospectiveForceList):
 		if len(prospectiveForceList) != 7:
 			return(False)
@@ -86,7 +86,6 @@ class ZmqClassRecv:
 	### Removed the serial_generator() and isCollectingData() ####
 
 	#returns most updated version of target forces
-	#TODO change targetForces to referenceForces
 	def getTargetForces(self):
 			return(self.referenceForces)
 

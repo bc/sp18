@@ -12,7 +12,6 @@ from motorControlHelperFunctions import *
 from calibrateLoadCells import collectDataAtZeroLoad
 from logCSV import *
 from pubstream import instantiate_zmq_publisher, publish_observation
-#from referenceClient import push_randomRefForce
 
 # If, god forbid, there's some weird GPIO import error which, apparently
 # happens??
@@ -20,7 +19,7 @@ try:
     import RPi.GPIO as GPIO
 except RuntimeError:
     print("Error! Must sudo!")
-pwm_controller_list = gen_pwm_controller_list() ### Removed arg for this fn ###
+pwm_controller_list = gen_pwm_controller_list()
 
 # Zmq is some zmq_generator that has input values coming in on a readline
 # like basis
@@ -103,7 +102,6 @@ try:
     lca = LoadCellAccumulator.LoadCellAccumulator()
     #print "lca retuned from LCA.py", lca
     time.sleep(1)
-    #push_randomRefForce()
     zmq_recv = ZmqClassRecv()
     print('Socket for receiving forces: Acquired')
     #TODO find source for this error
