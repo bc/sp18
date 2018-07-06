@@ -3,7 +3,8 @@
 
 # Project
 [Link](https://drive.google.com/drive/u/0/folders/17YGX4z6-UbCo59sUEkN28Xz-yqCJHCNE)
-
+noise
+http://doc-ok.org/?p=1478
 
 EEG --> Signal Processor --> Tendon Controller --> Cadaver Finger Force --> VR Visual Feedback
 Started project in Spring 2018 in Los Angeles.
